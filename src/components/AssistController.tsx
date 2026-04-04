@@ -1,60 +1,67 @@
 import React from 'react';
 import { useStore } from '../store/useStore';
-import { Settings2, Zap } from 'lucide-react';
+import { useAudioPlayback } from '../hooks/useAudioPlayback';
+import { Play, Pause, Trash2, Clock } from 'lucide-react';
 
 export const AssistController: React.FC = () => {
-  const { tempoMultiplier, setTempoMultiplier, godMode, toggleGodMode } = useStore();
+  const { inputBuffer, isPlaying, isPaused, clearBuffer, customTempo, setCustomTempo, setIsPaused } = useStore();
+  const { playSequence } = useAudioPlayback();
+
+  const handlePlayPause = () => {
+    if (isPaused) {
+      setIsPaused(false);
+      playSequence();
+    } else {
+      playSequence();
+    }
+  };
 
   return (
-    <div className="retro-container p-6 w-full">
-      <div className="flex items-center gap-3 mb-6 relative z-10">
-        <Settings2 className="w-8 h-8 text-amber-400 drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]" />
-        <h3 className="retro-title text-xl">Assist Settings</h3>
-      </div>
+    <div className="retro-container p-6 w-full bg-slate-900/80 border-slate-700">
+      <h3 className="retro-title text-lg text-slate-300 mb-4">MANUAL OVERRIDE</h3>
       
-      <div className="space-y-6 relative z-10">
-        <div>
-          <div className="flex justify-between retro-text mb-4">
-            <span className="text-slate-300">TEMPO ADJ</span>
-            <span className="text-amber-400 drop-shadow-[1px_1px_0px_rgba(0,0,0,1)]">{tempoMultiplier.toFixed(1)}X</span>
-          </div>
-          <input 
-            type="range" 
-            min="0.5" 
-            max="2.0" 
-            step="0.1" 
-            value={tempoMultiplier}
-            onChange={(e) => setTempoMultiplier(parseFloat(e.target.value))}
-            className="w-full h-4 bg-slate-800 border-2 border-slate-600 appearance-none cursor-pointer accent-amber-500"
-          />
-          <div className="flex justify-between retro-text text-slate-500 mt-2">
-            <span>FAST</span>
-            <span>NORM</span>
-            <span>SLOW</span>
-          </div>
-        </div>
+      <div className="flex items-center gap-4 mb-6 bg-slate-800/50 p-3 rounded-lg border border-slate-700">
+        <Clock className="w-5 h-5 text-amber-400" />
+        <label className="text-slate-300 font-mono text-sm flex-1">CUSTOM TIMING (MS):</label>
+        <input 
+          type="number" 
+          value={customTempo}
+          onChange={(e) => setCustomTempo(Math.max(100, Math.min(3000, parseInt(e.target.value) || 600)))}
+          className="bg-slate-900 border border-amber-500/50 rounded px-3 py-1 text-amber-400 font-mono w-24 text-center focus:outline-none focus:border-amber-400"
+          step="50"
+          min="100"
+          max="3000"
+        />
+      </div>
 
-        <div className="pt-4 border-t-4 border-slate-800">
-          <div className="flex justify-between items-center mb-2">
-            <span className="retro-text text-slate-300 flex items-center gap-2">
-              <Zap className={`w-5 h-5 ${godMode ? 'text-emerald-400' : 'text-slate-500'}`} />
-              GOD MODE
-            </span>
-          </div>
+      <div className="grid grid-cols-2 gap-4">
+        {isPaused ? (
           <button
-            onClick={toggleGodMode}
-            className={`retro-btn w-full !text-xl ${
-              godMode 
-                ? '!bg-emerald-500 !border-emerald-700 !text-black shadow-[0_0_15px_rgba(52,211,153,0.5)]' 
-                : '!bg-slate-800 !border-slate-900 !text-slate-500'
-            }`}
+            onClick={handlePlayPause}
+            className="retro-btn !bg-red-900/50 !border-red-700 !text-red-400 hover:!bg-red-800/50 flex flex-col items-center justify-center py-4 gap-2"
           >
-            {godMode ? 'ACTIVE: STEADY RHYTHM' : 'OFF'}
+            <Pause className="w-6 h-6" />
+            <span>PAUSED</span>
           </button>
-          <p className="retro-text text-slate-500 text-sm mt-2 leading-tight">
-            Removes all complex rhythms and speed scaling. Forces a steady, slow pace for every round.
-          </p>
-        </div>
+        ) : (
+          <button
+            onClick={handlePlayPause}
+            disabled={isPlaying || inputBuffer.length === 0}
+            className="retro-btn !bg-emerald-900/50 !border-emerald-700 !text-emerald-400 hover:!bg-emerald-800/50 disabled:opacity-50 flex flex-col items-center justify-center py-4 gap-2"
+          >
+            <Play className="w-6 h-6" />
+            <span>PLAY</span>
+          </button>
+        )}
+        
+        <button
+          onClick={clearBuffer}
+          disabled={isPlaying || inputBuffer.length === 0}
+          className="retro-btn !bg-slate-800 !border-slate-600 !text-slate-400 hover:!bg-slate-700 disabled:opacity-50 flex flex-col items-center justify-center py-4 gap-2"
+        >
+          <Trash2 className="w-6 h-6" />
+          <span>CLEAR</span>
+        </button>
       </div>
     </div>
   );
