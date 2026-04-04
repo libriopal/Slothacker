@@ -1,0 +1,157 @@
+[META_HEADER]
+TARGET_READER: LLM/AI_AGENT
+DOCUMENT_PURPOSE: COMPREHENSIVE_SYSTEM_AND_GAME_DESIGN_SPECIFICATION
+SUBJECT: ARCADE_SLOT_MEMORY_KIOSK_GAME
+FORMAT: STRUCTURED_MARKDOWN_WITH_EMBEDDED_JSON_SCHEMAS
+OPTIMIZATION_NOTE: High-density data structure. Token-optimized for context retention. Covers hardware, software, UI/UX, audio, mechanics, and cognitive vectors.
+
+================================================================================
+1. [PHYSICAL_HARDWARE_SPECIFICATIONS]
+================================================================================
+{
+  "cabinet_type": "Casino/Arcade Upright Kiosk",
+  "primary_display": {
+    "type": "Capacitive Touch Screen LCD/OLED",
+    "orientation": "Portrait",
+    "latency_ms": "< 15",
+    "resolution": "1080x1920 (Estimated)"
+  },
+  "peripheral_lighting": {
+    "type": "Addressable RGB LED Strips",
+    "location": ["Top Bezel", "Bottom Bezel"],
+    "behavior": "Continuous spectrum cycle (Neon Blue, Pink, Green, Yellow)",
+    "purpose": "Attract mode + Cognitive distraction vector during gameplay"
+  },
+  "physical_controls": {
+    "buttons": [{"name": "Collect", "type": "Illuminated Mechanical", "color": "Yellow/Orange"}],
+    "slots": ["Coin Acceptor", "Card Reader", "Ticket Dispenser (Optional)"]
+  }
+}
+
+================================================================================
+2. [UI_AND_VISUAL_ASSETS]
+================================================================================
+{
+  "theme": "Classic Mechanical Slot Machine",
+  "background": "Dark, out-of-focus casino environment",
+  "frame": {
+    "texture": "Polished Mahogany Wood",
+    "style": "Skeuomorphic, faux-3D depth"
+  },
+  "marquee_display": {
+    "location": "Top center, integrated into wooden frame",
+    "background": "Black LCD style",
+    "font": "Bold, Sans-Serif, Yellow (#FFFF00)",
+    "states": ["Round [X]", "Your turn!", "Got it!", "Fail!", "INTERMISSION"]
+  },
+  "reels": {
+    "count": 3,
+    "color": "Off-white / Cream",
+    "dividers": "Thick metallic silver borders",
+    "curvature": "Simulated cylinder via shading and vertical compression at top/bottom edges"
+  }
+}
+
+================================================================================
+3. [SYMBOL_DICTIONARY_AND_GRID_MAPPING]
+================================================================================
+GRID_COORDINATES: (X, Y) where X=0,1,2 (Cols A,B,C) and Y=0,1,2 (Rows 1,2,3)
+SYMBOL_POOL:
+- FRUIT: "Cherry", "Plum", "Orange", "Watermelon"
+- CASINO_CLASSIC: "Liberty Bell", "Dollar Sign ($)", "Red Number 7"
+- TEXT_BLOCKS: "Single BAR", "Double BAR", "Triple BAR"
+
+RENDERING_STYLE: High-gloss, 3D metallic/plastic, static during gameplay.
+BEHAVIOR: Symbols are randomized at session start. They DO NOT spin between rounds. They remain static to provide a consistent spatial memory map.
+
+================================================================================
+4. [CORE_GAMEPLAY_MECHANICS_AND_RULES]
+================================================================================
+{
+  "objective": "Memorize and reproduce a growing sequence of spatial locations.",
+  "win_condition": "Successfully input the exact sequence of flashes.",
+  "loss_condition": "Inputting an incorrect location OR inputting a correct location out of chronological order.",
+  "lives": 1,
+  "sudden_death": true,
+  "input_timeout_ms": 5000,
+  "sequence_generation": {
+    "type": "Additive or Procedural (New sequence generated per round, or appending to previous)",
+    "allow_consecutive_duplicates": true,
+    "allow_simultaneous_flashes": false
+  }
+}
+
+================================================================================
+5. [AUDIO_DESIGN_SPECIFICATIONS (EXTRAPOLATED)]
+================================================================================
+{
+  "bgm": "Low-volume casino ambient noise (chatter, slot machine chimes)",
+  "sfx_flash_prompt": "Sharp, distinct electronic beep or mechanical 'clack'. Pitch may map to Y-axis.",
+  "sfx_user_tap": "Tactile 'thud' or high-pitched confirmation blip.",
+  "sfx_success": "Ascending major chord, coin-dispense sound.",
+  "sfx_fail": "Harsh, descending minor buzzer (e.g., 'Errnt!').",
+  "sfx_intermission": "Theatrical curtain swoosh, dramatic orchestral swell."
+}
+
+================================================================================
+6. [DIFFICULTY_SCALING_AND_PROGRESSION_ALGORITHM]
+================================================================================
+PHASE_1: EARLY GAME (Rounds 1 - 4)
+- Sequence Length: Starts at 3, increments by 1 per round.
+- Flash Duration: ~250ms.
+- Inter-Flash Interval: ~250ms.
+- Rhythm: Steady, metronomic.
+
+PHASE_2: THE THRESHOLD (Round 5)
+- Sequence Length: ~7 (Approaching limit of average human working memory).
+- Triggers INTERMISSION upon completion.
+
+PHASE_3: INTERMISSION EVENT
+- Visual: Red velvet curtains close, obscuring the grid.
+- Text: "INTERMISSION" displayed.
+- Duration: ~5000ms.
+- Purpose: Cognitive disruption. Forces the "Visuospatial Sketchpad" to dump its contents. Breaks physical tapping rhythm.
+
+PHASE_4: LATE GAME / ESCALATION (Rounds 6+)
+- Sequence Length: 8+
+- Flash Duration: Reduced by 30-50% (e.g., ~120ms - 150ms).
+- Inter-Flash Interval: Reduced.
+- Rhythm: SYNCOPATED. Introduces artificial delays (e.g., Flash, Flash, [400ms pause], Flash) to disrupt rhythmic memory encoding.
+
+================================================================================
+7. [COGNITIVE_PSYCHOLOGY_VECTORS]
+================================================================================
+{
+  "memory_systems_taxed": [
+    "Visuospatial Sketchpad (Tracking grid coordinates)",
+    "Phonological Loop (Internal verbalization of sequence, e.g., 'Top-left, middle, bottom-right')",
+    "Motor Memory (Physical hand travel paths)"
+  ],
+  "cognitive_overload_triggers": [
+    "Sequence length exceeding Miller's Law (7 ± 2 items)",
+    "Syncopation disrupting chunking strategies",
+    "Visual noise from peripheral RGB LEDs"
+  ],
+  "gamblers_fallacy_integration": "By utilizing slot machine iconography, the game subconsciously triggers gambling-related dopamine loops (near-miss effect), despite being a 100% skill-based deterministic system. This increases replayability and coin-drop rate after failure."
+}
+
+================================================================================
+8. [STATE_MACHINE_TRANSITIONS]
+================================================================================
+[IDLE] -> (Coin Insert) -> [INIT_SESSION]
+[INIT_SESSION] -> (Randomize Grid) -> [ROUND_START]
+[ROUND_START] -> (Display "Round X") -> [PROMPT_SEQUENCE]
+[PROMPT_SEQUENCE] -> (Flash Array) -> [AWAIT_INPUT]
+[AWAIT_INPUT] -> (Display "Your turn!") -> [EVALUATE_INPUT]
+
+[EVALUATE_INPUT] -> (If Tap == Correct && Sequence Incomplete) -> [AWAIT_INPUT]
+[EVALUATE_INPUT] -> (If Tap == Correct && Sequence Complete) -> [SUCCESS]
+[EVALUATE_INPUT] -> (If Tap == Incorrect) -> [FAIL]
+
+[SUCCESS] -> (If Round == 5) -> [INTERMISSION]
+[SUCCESS] -> (If Round != 5) -> [ROUND_START (X+1)]
+
+[INTERMISSION] -> (Wait 5000ms) -> [ROUND_START (6)]
+[FAIL] -> (Display "Fail!") -> [GAME_OVER] -> [IDLE]
+
+[END_OF_DOCUMENT]
