@@ -1,0 +1,92 @@
+[META_HEADER]
+TARGET_READER: LLM/AI_AGENT
+DOCUMENT_PURPOSE: COMPREHENSIVE_AUDIO_AND_PSYCHOACOUSTIC_SPECIFICATION
+SUBJECT: ARCADE_SLOT_MEMORY_KIOSK_GAME
+FORMAT: STRUCTURED_MARKDOWN_WITH_EMBEDDED_JSON_SCHEMAS
+OPTIMIZATION_NOTE: High-density data structure. Token-optimized. Focuses on sound design, spatial audio mapping, dynamic tempo scaling, and psychoacoustic tension vectors.
+
+================================================================================
+1. [AUDIO_ARCHITECTURE_AND_MIXING_ENVIRONMENT]
+================================================================================
+{
+  "environment": "High-noise arcade/casino floor",
+  "output_hardware": "Front-facing stereo speakers built into the cabinet bezel, likely optimized for mid-to-high frequency clarity to cut through ambient noise.",
+  "dynamic_range": "Highly compressed. Loudness is normalized to ensure prompt tones are never masked by background music (BGM).",
+  "spatialization": "Hard-panned stereo field used to reinforce spatial memory (Left/Center/Right)."
+}
+
+================================================================================
+2. [GRID-TO-PITCH MAPPING (THE 3x3 SOUNDSCAPE)]
+================================================================================
+To assist (or confuse) cognitive load, each of the 9 grid positions is mapped to a specific audio profile. The game utilizes a combination of Pitch (Y-axis) and Panning (X-axis).
+
+{
+  "timbre": "Synthesized FM Bell / Mechanical Clack hybrid. Short attack, zero sustain, rapid decay (ADSR: 5ms, 150ms, 0, 50ms). Designed to be percussive and distinct.",
+  "spatial_panning": {
+    "Column_A (Left)": "Pan -0.8 (Hard Left)",
+    "Column_B (Center)": "Pan 0.0 (Dead Center)",
+    "Column_C (Right)": "Pan +0.8 (Hard Right)"
+  },
+  "pitch_mapping": {
+    "scale": "C Major Pentatonic (C, D, E, G, A) - avoids dissonant intervals to prevent auditory fatigue, but spans enough octaves to differentiate 9 distinct tones.",
+    "Row_1 (Top)": ["A5", "C6", "D6"],
+    "Row_2 (Middle)": ["E5", "G5", "A5"],
+    "Row_3 (Bottom)": ["C4", "D4", "E4"]
+  }
+}
+*NOTE: When the machine flashes a prompt, it plays the corresponding tone. When the user taps the screen, the exact same tone is triggered, providing immediate auditory confirmation of the spatial input.*
+
+================================================================================
+3. [STATE-BASED AUDIO CUES (STINGERS & SFX)]
+================================================================================
+{
+  "STATE_INIT_ROUND": {
+    "sfx": "Mechanical gears grinding briefly, followed by a sharp 'Ding!'",
+    "purpose": "Auditory anchor signaling the start of the observation phase."
+  },
+  "STATE_INPUT_WAIT (Your Turn!)": {
+    "sfx": "High-pitched, double-chirp (e.g., 800Hz square wave, 50ms duration x2).",
+    "purpose": "Action cue. Shifts player from passive observation to active motor execution."
+  },
+  "STATE_SUCCESS (Got it!)": {
+    "sfx": "Ascending major arpeggio (C-E-G-C) played on a bright synth, layered with the sound of physical coins clinking.",
+    "purpose": "Positive reinforcement. Dopamine trigger mimicking a slot machine payout."
+  },
+  "STATE_FAIL": {
+    "sfx": "Harsh, low-frequency sawtooth buzzer (e.g., 150Hz) layered with a descending pitch-drop ('tape stop' effect).",
+    "purpose": "Punishing, dissonant auditory feedback. Instantly breaks the musical flow to signal a hard failure state."
+  },
+  "STATE_INTERMISSION": {
+    "sfx_start": "Heavy, physical sound of velvet curtains sliding on a metal track. Low-end rumble.",
+    "sfx_duration": "Absolute silence. The BGM drops out completely.",
+    "sfx_end": "Curtains opening, followed by a heavy, cinematic bass impact (sub-boom).",
+    "purpose": "The silence is weaponized. It creates an auditory vacuum that heightens anxiety and disrupts the rhythmic flow established in Rounds 1-5."
+  }
+}
+
+================================================================================
+4. [DYNAMIC TEMPO & RHYTHMIC SYNCOPATION (ROUNDS 6+)]
+================================================================================
+The audio engine is tied directly to the difficulty scaling algorithm.
+
+{
+  "phase_1_rhythm (Rounds 1-4)": {
+    "bpm_equivalent": "120 BPM",
+    "structure": "Straight quarter notes. Predictable, metronomic pacing. Allows the player to internalize a steady physical tapping rhythm."
+  },
+  "phase_2_rhythm (Rounds 6+)": {
+    "bpm_equivalent": "Scales from 160 BPM to 240+ BPM",
+    "structure": "Syncopated and erratic.",
+    "audio_behavior": "The prompt tones no longer play at steady intervals. The engine introduces swing, triplets, and artificial rests (e.g., Tone... Tone... [Rest]... ToneToneTone).",
+    "cognitive_impact": "Destroys the player's ability to rely on 'muscle memory' rhythm. The player must now memorize the *temporal spacing* of the audio cues alongside the spatial locations, effectively doubling the cognitive load."
+  }
+}
+
+================================================================================
+5. [PSYCHOACOUSTIC TENSION VECTORS]
+================================================================================
+- PITCH ESCALATION: As the sequence gets longer within a single round, the underlying background drone (if present) slowly pitches up, creating a Shepard Tone illusion of constantly rising tension.
+- AUDITORY MASKING AVOIDANCE: The prompt tones are synthesized with sharp transients (high initial attack) specifically so they cut through the ambient noise of an arcade. This ensures the player cannot blame a failure on "not hearing" the cue.
+- THE "SLOT MACHINE" ILLUSION: Despite being a pure memory game, the audio palette is heavily borrowed from traditional gambling machines (bells, coin clinks, mechanical whirrs). This leverages pre-existing psychological conditioning associated with gambling, making the sudden-death failure state feel more frustrating and the successes feel more rewarding, driving coin-in behavior.
+
+[END_OF_DOCUMENT]
