@@ -1,0 +1,151 @@
+[META_HEADER]
+TARGET_READER: LLM/AI_AGENT
+DOCUMENT_PURPOSE: MILLISECOND_TIMING_AND_STATE_MACHINE_SPECIFICATION
+SUBJECT: ARCADE_SLOT_MEMORY_KIOSK_GAME
+FORMAT: STRUCTURED_MARKDOWN_AND_PSEUDO_JSON
+NOTE: Document optimized for token-efficient parsing, state-reconstruction, and algorithmic analysis.
+
+[SYSTEM_ARCHITECTURE_AND_GRID_MAPPING]
+GRID_DIMENSIONS: 3x3 (Cols: A,B,C | Rows: 1,2,3)
+COORDINATE_SYSTEM:
+  A1(0,0): Plum/Orange      B1(1,0): BAR_BAR          C1(2,0): BAR_BAR_BAR
+  A2(0,1): Plum/Orange      B2(1,1): Dollar_Sign      C2(2,1): Cherry
+  A3(0,2): Watermelon       B3(1,2): Number_7         C3(2,2): Bell
+SYMBOL_STATE: STATIC_PER_SESSION
+INPUT_METHOD: CAPACITIVE_TOUCH_SCREEN
+LATENCY_ESTIMATE: <15ms (Screen to Logic)
+
+[STATE_MACHINE_DEFINITIONS]
+STATE_0: INIT (Reels spin, lock symbols)
+STATE_1: PROMPT (Header: "Round [X]". System flashes sequence. Input disabled.)
+STATE_2: INPUT_WAIT (Header: "Your turn!". Input enabled. Timer starts.)
+STATE_3: INPUT_EVAL (User taps. System checks against sequence array.)
+STATE_4: SUCCESS (Header: "Got it!". Delay before STATE_1.)
+STATE_5: FAIL (Header: "Fail!". Session terminates.)
+STATE_6: INTERMISSION (Header: "INTERMISSION". Curtains close. 5000ms delay. Clears working memory.)
+
+[TIMING_SPECIFICATION_AND_EVENT_LOG]
+// Timings are extrapolated estimates based on standard human-computer interaction models observed in the reference video.
+// Format: T+[Seconds.Milliseconds] | [STATE] | [ACTION] | [DELTA_FROM_PREV]
+
+--- ROUND 2 ---
+T+00:00.000 | STATE_1 | INIT_ROUND_2 | D: 0ms
+T+00:00.500 | STATE_1 | FLASH_START_IDX_0 (A1) | D: +500ms
+T+00:00.750 | STATE_1 | FLASH_END_IDX_0 | D: +250ms (Flash Duration)
+T+00:01.000 | STATE_1 | FLASH_START_IDX_1 (B2) | D: +250ms (Inter-flash interval)
+T+00:01.250 | STATE_1 | FLASH_END_IDX_1 | D: +250ms
+T+00:01.500 | STATE_1 | FLASH_START_IDX_2 (C3) | D: +250ms
+T+00:01.750 | STATE_1 | FLASH_END_IDX_2 | D: +250ms
+T+00:02.000 | STATE_2 | UI_UPDATE: "Your turn!" | D: +250ms
+T+00:02.600 | STATE_3 | USER_INPUT: A1 | D: +600ms (Human reaction time + travel)
+T+00:03.100 | STATE_3 | USER_INPUT: B2 | D: +500ms
+T+00:03.500 | STATE_3 | USER_INPUT: C3 | D: +400ms
+T+00:03.515 | STATE_4 | UI_UPDATE: "Got it!" | D: +15ms (Logic eval)
+T+00:04.515 | STATE_1 | TRANSITION_TO_ROUND_3 | D: +1000ms (Success pause)
+
+--- ROUND 3 ---
+T+00:04.515 | STATE_1 | INIT_ROUND_3 | D: 0ms
+T+00:05.015 | STATE_1 | FLASH_START_IDX_0 (C1) | D: +500ms
+T+00:05.265 | STATE_1 | FLASH_END_IDX_0 | D: +250ms
+T+00:05.515 | STATE_1 | FLASH_START_IDX_1 (A3) | D: +250ms
+T+00:05.765 | STATE_1 | FLASH_END_IDX_1 | D: +250ms
+T+00:06.015 | STATE_1 | FLASH_START_IDX_2 (B1) | D: +250ms
+T+00:06.265 | STATE_1 | FLASH_END_IDX_2 | D: +250ms
+T+00:06.515 | STATE_1 | FLASH_START_IDX_3 (C2) | D: +250ms
+T+00:06.765 | STATE_1 | FLASH_END_IDX_3 | D: +250ms
+T+00:07.015 | STATE_2 | UI_UPDATE: "Your turn!" | D: +250ms
+T+00:07.515 | STATE_3 | USER_INPUT: C1 | D: +500ms
+T+00:08.015 | STATE_3 | USER_INPUT: A3 | D: +500ms
+T+00:08.415 | STATE_3 | USER_INPUT: B1 | D: +400ms
+T+00:08.815 | STATE_3 | USER_INPUT: C2 | D: +400ms
+T+00:08.830 | STATE_4 | UI_UPDATE: "Got it!" | D: +15ms
+T+00:09.830 | STATE_1 | TRANSITION_TO_ROUND_4 | D: +1000ms
+
+--- ROUND 4 ---
+// Sequence length increases. Flash duration remains ~250ms. Inter-flash interval remains ~250ms.
+T+00:09.830 | STATE_1 | INIT_ROUND_4 | D: 0ms
+// ... [Flashes 0 through 4 omitted for brevity, standard 500ms cycle] ...
+T+00:12.580 | STATE_2 | UI_UPDATE: "Your turn!" | D: +250ms
+// ... [User inputs 0 through 4] ...
+T+00:14.800 | STATE_4 | UI_UPDATE: "Got it!" | D: +15ms
+T+00:15.800 | STATE_1 | TRANSITION_TO_ROUND_5 | D: +1000ms
+
+--- ROUND 5 (THRESHOLD ROUND) ---
+T+00:15.800 | STATE_1 | INIT_ROUND_5 | D: 0ms
+// Sequence length: 6.
+// ... [Flashes 0 through 5] ...
+T+00:19.050 | STATE_2 | UI_UPDATE: "Your turn!" | D: +250ms
+// ... [User inputs 0 through 5] ...
+T+00:22.500 | STATE_4 | UI_UPDATE: "Got it!" | D: +15ms
+
+--- INTERMISSION EVENT ---
+T+00:22.515 | STATE_6 | TRIGGER_INTERMISSION | D: +15ms
+T+00:22.515 | STATE_6 | ANIM_START: CURTAINS_CLOSE | D: 0ms
+T+00:23.015 | STATE_6 | ANIM_END: CURTAINS_CLOSE | D: +500ms
+T+00:23.015 | STATE_6 | UI_UPDATE: "INTERMISSION" TEXT_FADE_IN | D: 0ms
+T+00:28.015 | STATE_6 | UI_UPDATE: "INTERMISSION" TEXT_FADE_OUT | D: +5000ms (Cognitive reset period)
+T+00:28.015 | STATE_6 | ANIM_START: CURTAINS_OPEN | D: 0ms
+T+00:28.515 | STATE_6 | ANIM_END: CURTAINS_OPEN | D: +500ms
+T+00:28.515 | STATE_1 | TRANSITION_TO_ROUND_6 | D: 0ms
+
+--- ROUND 6 (POST-INTERMISSION ESCALATION) ---
+// ALGORITHMIC SHIFT: Flash duration decreases. Inter-flash interval decreases. Syncopation introduced.
+T+00:28.515 | STATE_1 | INIT_ROUND_6 | D: 0ms
+T+00:29.015 | STATE_1 | FLASH_START_IDX_0 | D: +500ms
+T+00:29.165 | STATE_1 | FLASH_END_IDX_0 | D: +150ms (Flash duration reduced by 40%)
+T+00:29.315 | STATE_1 | FLASH_START_IDX_1 | D: +150ms (Inter-flash interval reduced by 40%)
+T+00:29.465 | STATE_1 | FLASH_END_IDX_1 | D: +150ms
+T+00:29.865 | STATE_1 | FLASH_START_IDX_2 | D: +400ms (SYNCOPATION: Artificial delay introduced)
+T+00:30.015 | STATE_1 | FLASH_END_IDX_2 | D: +150ms
+// ... [Flashes 3 through 6] ...
+T+00:31.500 | STATE_2 | UI_UPDATE: "Your turn!" | D: +200ms
+// User input speed must increase to match cognitive decay rate of longer sequence.
+// ... [User inputs 0 through 6] ...
+T+00:35.000 | STATE_4 | UI_UPDATE: "Got it!" | D: +15ms
+T+00:36.000 | STATE_1 | TRANSITION_TO_ROUND_7 | D: +1000ms
+
+--- ROUND 7 ---
+// Sequence length: 8. Speed remains high.
+T+00:36.000 | STATE_1 | INIT_ROUND_7 | D: 0ms
+// ... [Flashes 0 through 7] ...
+T+00:39.500 | STATE_2 | UI_UPDATE: "Your turn!" | D: +200ms
+// ... [User inputs 0 through 7] ...
+T+00:44.000 | STATE_4 | UI_UPDATE: "Got it!" | D: +15ms
+T+00:45.000 | STATE_1 | TRANSITION_TO_ROUND_8 | D: +1000ms
+
+--- ROUND 8 (FAILURE STATE) ---
+// Sequence length: 9+. Speed maximum. Complex syncopation.
+T+00:45.000 | STATE_1 | INIT_ROUND_8 | D: 0ms
+T+00:45.500 | STATE_1 | FLASH_START_IDX_0 | D: +500ms
+T+00:45.620 | STATE_1 | FLASH_END_IDX_0 | D: +120ms (Flash duration further reduced)
+T+00:45.740 | STATE_1 | FLASH_START_IDX_1 | D: +120ms
+T+00:45.860 | STATE_1 | FLASH_END_IDX_1 | D: +120ms
+// ... [Flashes 2 through 8] ...
+T+00:48.500 | STATE_2 | UI_UPDATE: "Your turn!" | D: +200ms
+T+00:49.100 | STATE_3 | USER_INPUT: CORRECT_IDX_0 | D: +600ms
+T+00:49.500 | STATE_3 | USER_INPUT: CORRECT_IDX_1 | D: +400ms
+T+00:49.900 | STATE_3 | USER_INPUT: CORRECT_IDX_2 | D: +400ms
+T+00:50.400 | STATE_3 | USER_INPUT: INCORRECT_IDX_3 | D: +500ms (Cognitive hesitation observed)
+T+00:50.415 | STATE_5 | LOGIC_EVAL: MISMATCH_DETECTED | D: +15ms
+T+00:50.415 | STATE_5 | UI_UPDATE: "Fail!" | D: 0ms
+T+00:50.415 | STATE_5 | SESSION_TERMINATED | D: 0ms
+
+[COGNITIVE_LOAD_ALGORITHM_REVERSE_ENGINEERING]
+FUNCTION CalculateDifficulty(Round R):
+  BaseFlashDuration = 250ms
+  BaseInterval = 250ms
+  SequenceLength = R + 2
+  
+  IF R > 5 (Post-Intermission):
+    SpeedMultiplier = 0.6 // 40% faster
+    SyncopationProbability = 0.3 // 30% chance for off-beat timing
+  ELSE:
+    SpeedMultiplier = 1.0
+    SyncopationProbability = 0.0
+    
+  FlashDuration = BaseFlashDuration * SpeedMultiplier
+  Interval = BaseInterval * SpeedMultiplier
+  
+  RETURN {SequenceLength, FlashDuration, Interval, SyncopationProbability}
+
+[END_OF_SPECIFICATION]
