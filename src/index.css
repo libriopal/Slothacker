@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-retro: "VT323", monospace;
+}
+
+body {
+  font-family: "VT323", monospace;
+  background-color: #020617; /* slate-950 */
+  background-image: 
+    linear-gradient(rgba(245, 158, 11, 0.05) 2px, transparent 2px),
+    linear-gradient(90deg, rgba(245, 158, 11, 0.05) 2px, transparent 2px);
+  background-size: 32px 32px;
+}
+
+.retro-container {
+  @apply bg-slate-900 border-4 border-slate-600 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.8)] rounded-none relative;
+}
+.retro-container::after {
+  content: '';
+  @apply absolute inset-0 border-2 border-slate-800 pointer-events-none;
+}
+
+.retro-btn {
+  @apply bg-amber-500 text-black border-b-4 border-r-4 border-amber-700 active:border-b-0 active:border-r-0 active:translate-y-1 active:translate-x-1 px-4 py-2 font-retro text-2xl uppercase tracking-wider flex items-center justify-center gap-2 transition-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] active:shadow-none;
+}
+.retro-btn:disabled {
+  @apply bg-slate-700 border-slate-900 text-slate-500 cursor-not-allowed active:translate-y-0 active:translate-x-0 active:border-b-4 active:border-r-4 active:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)];
+}
+
+.retro-title {
+  @apply font-retro text-amber-400 uppercase tracking-widest drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] text-2xl;
+}
+
+.retro-text {
+  @apply font-retro text-xl tracking-wide;
+}
+
+.scanlines {
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0),
+    rgba(255,255,255,0) 50%,
+    rgba(0,0,0,0.25) 50%,
+    rgba(0,0,0,0.25)
+  );
+  background-size: 100% 4px;
+}

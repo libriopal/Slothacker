@@ -1,0 +1,5 @@
+{
+  "name": "Slot Hacker",
+  "description": "A voice-controlled, audio-only timing engine that guides users through 18 levels of grid sequences using precise Web Audio scheduling and spatial panning. Includes a visual assistant camera.",
+  "requestFramePermissions": ["microphone", "camera"]
+}
