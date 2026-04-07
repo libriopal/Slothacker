@@ -10,15 +10,14 @@ export const AudioIntelligence: React.FC = () => {
     autoCaptureMode, 
     toggleAutoCapture, 
     lastDetectedTone,
-    audioError,
-    isPaused
+    audioError
   } = useStore();
 
   // Initialize the psychoacoustic hook
   usePsychoacoustic();
 
   return (
-    <div className={`retro-container p-6 w-full mt-6 border-emerald-900 bg-slate-900/80 transition-all duration-500 ${isPaused ? 'grayscale opacity-50' : ''}`}>
+    <div className="retro-container p-6 w-full mt-6 border-emerald-900 bg-slate-900/80 transition-all duration-500">
       <div className="flex items-center justify-between mb-4 relative z-10">
         <div className="flex items-center gap-3">
           <Activity className="w-6 h-6 text-emerald-400 drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]" />

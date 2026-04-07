@@ -4,11 +4,23 @@ class AudioEngine {
   private ctx: AudioContext | null = null;
   private isInitialized = false;
   private activeOscillators: OscillatorNode[] = [];
+  private masterGain: GainNode | null = null;
+  private currentVolume: number = 0.8;
 
   public init() {
     if (!this.ctx) {
       this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.value = this.currentVolume;
+      this.masterGain.connect(this.ctx.destination);
       this.isInitialized = true;
+    }
+  }
+
+  public setMasterVolume(volumePercent: number) {
+    this.currentVolume = volumePercent / 100;
+    if (this.masterGain && this.ctx) {
+      this.masterGain.gain.setTargetAtTime(this.currentVolume, this.ctx.currentTime, 0.05);
     }
   }
 
@@ -55,7 +67,7 @@ class AudioEngine {
   }
 
   public scheduleTone(position: GridPosition, time: number) {
-    if (!this.ctx) return;
+    if (!this.ctx || !this.masterGain) return;
 
     const row = position.charAt(0);
     const col = position.charAt(1);
@@ -77,7 +89,7 @@ class AudioEngine {
 
     osc.connect(panner);
     panner.connect(gainNode);
-    gainNode.connect(this.ctx.destination);
+    gainNode.connect(this.masterGain);
 
     osc.start(time);
     osc.stop(time + 0.4);
@@ -91,7 +103,7 @@ class AudioEngine {
   }
 
   public scheduleCountdown(step: number, time: number) {
-    if (!this.ctx) return;
+    if (!this.ctx || !this.masterGain) return;
     
     const osc = this.ctx.createOscillator();
     const gainNode = this.ctx.createGain();
@@ -105,14 +117,14 @@ class AudioEngine {
     gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
     
     osc.connect(gainNode);
-    gainNode.connect(this.ctx.destination);
+    gainNode.connect(this.masterGain);
     
     osc.start(time);
     osc.stop(time + 0.15);
   }
 
   public playError() {
-    if (!this.ctx) return;
+    if (!this.ctx || !this.masterGain) return;
     const time = this.ctx.currentTime;
     const osc = this.ctx.createOscillator();
     const gainNode = this.ctx.createGain();
@@ -126,7 +138,7 @@ class AudioEngine {
     gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.3);
     
     osc.connect(gainNode);
-    gainNode.connect(this.ctx.destination);
+    gainNode.connect(this.masterGain);
     
     osc.start(time);
     osc.stop(time + 0.3);

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AssistController } from './components/AssistController';
 import { AudioIntelligence } from './components/AudioIntelligence';
 import { SequenceMirror } from './components/SequenceMirror';
 import { PauseCircle, Rewind, FastForward, Undo2, Play, ChevronLeft, Settings, X } from 'lucide-react';
 import { useStore } from './store/useStore';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
+import { audioEngine } from './services/audioEngine';
 
 export default function App() {
   const { 
@@ -14,6 +15,10 @@ export default function App() {
     customTempo, setCustomTempo
   } = useStore();
   const { playSequence } = useAudioPlayback();
+
+  useEffect(() => {
+    audioEngine.setMasterVolume(volume);
+  }, [volume]);
 
   const handleUnpause = () => {
     setIsPaused(false);

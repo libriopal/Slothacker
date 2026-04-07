@@ -34,16 +34,6 @@ export const AssistController: React.FC = () => {
     return () => clearInterval(interval);
   }, [isPlaying, isPaused, totalTime]);
 
-  const handlePlayPause = () => {
-    if (isPlaying) {
-      stopSequence();
-      setIsPaused(true);
-    } else {
-      setIsPaused(false);
-      playSequence();
-    }
-  };
-
   const handleRestart = () => {
     stopSequence();
     setCurrentTime(0);
