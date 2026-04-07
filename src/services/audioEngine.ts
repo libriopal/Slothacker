@@ -3,6 +3,7 @@ import { GridPosition } from '../types';
 class AudioEngine {
   private ctx: AudioContext | null = null;
   private isInitialized = false;
+  private activeOscillators: OscillatorNode[] = [];
 
   public init() {
     if (!this.ctx) {
@@ -20,6 +21,18 @@ class AudioEngine {
     if (this.ctx && this.ctx.state === 'suspended') {
       await this.ctx.resume();
     }
+  }
+
+  public stopAll() {
+    this.activeOscillators.forEach(osc => {
+      try {
+        osc.stop();
+        osc.disconnect();
+      } catch (e) {
+        // Ignore errors if already stopped
+      }
+    });
+    this.activeOscillators = [];
   }
 
   private getFrequency(row: string): number {
@@ -68,6 +81,13 @@ class AudioEngine {
 
     osc.start(time);
     osc.stop(time + 0.4);
+    
+    this.activeOscillators.push(osc);
+    
+    // Clean up reference after it finishes
+    setTimeout(() => {
+      this.activeOscillators = this.activeOscillators.filter(o => o !== osc);
+    }, (time - this.ctx.currentTime + 0.5) * 1000);
   }
 
   public scheduleCountdown(step: number, time: number) {

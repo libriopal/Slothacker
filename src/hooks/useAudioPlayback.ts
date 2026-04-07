@@ -1,13 +1,35 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { useStore } from '../store/useStore';
 import { audioEngine } from '../services/audioEngine';
 import { generateSequenceForRound } from '../utils/levelManager';
+import { GridPosition } from '../types';
 
 export const useAudioPlayback = () => {
-  const { inputBuffer, setIsPlaying, setPlaybackStepIndex, customTempo } = useStore();
+  const { inputBuffer, setIsPlaying, setPlaybackStepIndex, customTempo, setIsPaused } = useStore();
+  const timeoutRefs = useRef<NodeJS.Timeout[]>([]);
 
-  const playSequence = useCallback(async () => {
-    if (inputBuffer.length === 0) return;
+  const stopSequence = useCallback(() => {
+    // Clear all scheduled visual updates
+    timeoutRefs.current.forEach(clearTimeout);
+    timeoutRefs.current = [];
+    
+    // Stop all audio
+    audioEngine.stopAll();
+    
+    setIsPlaying(false);
+    setPlaybackStepIndex(-1);
+  }, [setIsPlaying, setPlaybackStepIndex]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => stopSequence();
+  }, [stopSequence]);
+
+  const playSequence = useCallback(async (overrideBuffer?: GridPosition[], pauseAfter: boolean = false) => {
+    stopSequence(); // Stop any currently playing sequence
+
+    const bufferToPlay = overrideBuffer || inputBuffer;
+    if (bufferToPlay.length === 0) return;
 
     setIsPlaying(true);
     setPlaybackStepIndex(-1);
@@ -15,7 +37,7 @@ export const useAudioPlayback = () => {
     const ctx = audioEngine.getContext();
     
     // Generate sequence with precise timing (God Mode flat timing)
-    const sequence = generateSequenceForRound(inputBuffer, customTempo);
+    const sequence = generateSequenceForRound(bufferToPlay, customTempo);
     
     const now = ctx.currentTime;
     
@@ -28,21 +50,24 @@ export const useAudioPlayback = () => {
       audioEngine.scheduleTone(step.position, stepTime);
       
       // Schedule visual sync
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         setPlaybackStepIndex(index);
       }, (stepTime - now) * 1000);
+      timeoutRefs.current.push(timeoutId);
 
       cumulativeDelay += step.delay / 1000; // Convert ms to seconds for the NEXT step
     });
     
     // Reset playing state after sequence finishes
     const totalDuration = sequenceStartTime + cumulativeDelay - now;
-    setTimeout(() => {
+    const finishTimeoutId = setTimeout(() => {
       setPlaybackStepIndex(-1);
       setIsPlaying(false);
+      // We no longer auto-pause here
     }, totalDuration * 1000);
+    timeoutRefs.current.push(finishTimeoutId);
     
-  }, [inputBuffer, setIsPlaying, setPlaybackStepIndex, customTempo]);
+  }, [inputBuffer, customTempo, setIsPlaying, setPlaybackStepIndex, stopSequence]);
 
-  return { playSequence };
+  return { playSequence, stopSequence };
 };

@@ -2,7 +2,7 @@ export type GridRow = "A" | "B" | "C";
 export type GridCol = "1" | "2" | "3";
 export type GridPosition = `${GridRow}${GridCol}`;
 
-export type SymbolType = '1BAR' | '2BARS' | '3BARS' | 'Cherries' | 'Bell' | 'Plum' | '7' | '$';
+export type SymbolType = '1bar' | '2bar' | '2bar2' | '3bar' | 'cherries' | 'plumb' | 'bell' | 'melon' | '7' | '$';
 export type GlowColor = 'red' | 'blue' | 'green' | 'gray' | 'orange' | 'purple';
 
 export interface GridCellData {
@@ -35,6 +35,12 @@ export interface AppState {
   isPaused: boolean;
   customTempo: number;
   
+  // New Settings
+  isSettingsOpen: boolean;
+  volume: number;
+  crtEffect: boolean;
+  showGridLabels: boolean;
+  
   stats: {
     accuracy: number;
     timingError: number;
@@ -44,11 +50,17 @@ export interface AppState {
   setRound: (round: number) => void;
   addToBuffer: (pos: GridPosition) => void;
   removeFromBuffer: (index: number) => void;
+  undoLastInput: () => void;
   clearBuffer: () => void;
   setIsPlaying: (isPlaying: boolean) => void;
   setPlaybackStepIndex: (index: number) => void;
   setIsPaused: (isPaused: boolean) => void;
   setCustomTempo: (tempo: number) => void;
+  
+  setIsSettingsOpen: (isOpen: boolean) => void;
+  setVolume: (volume: number) => void;
+  setCrtEffect: (enabled: boolean) => void;
+  setShowGridLabels: (show: boolean) => void;
   
   setCameraSetupComplete: (complete: boolean) => void;
   setGridData: (data: Record<GridPosition, GridCellData | null>) => void;
